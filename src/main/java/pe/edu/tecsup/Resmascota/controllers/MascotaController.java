@@ -17,10 +17,14 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import pe.edu.tecsup.Resmascota.entities.Mascota;
 import pe.edu.tecsup.Resmascota.services.MascotaService;
+
 
 @RestController
 public class MascotaController {
@@ -33,7 +37,7 @@ private static final Logger logger = LoggerFactory.getLogger(MascotaController.c
 	@Autowired
 	private MascotaService productoService;
 	
-	@GetMapping("/productos")
+	@GetMapping("/mascota")
 	public List<Mascota> productos() {
 		logger.info("call productos");
 		
@@ -62,6 +66,31 @@ private static final Logger logger = LoggerFactory.getLogger(MascotaController.c
 				.header(HttpHeaders.CONTENT_TYPE, Files.probeContentType(Paths.get(STORAGEPATH).resolve(filename)))
 				.header(HttpHeaders.CONTENT_LENGTH, String.valueOf(resource.contentLength()))
 				.body(resource);
+	}
+	
+	@PostMapping("/mascotas")
+	public Mascota crear(@RequestParam(name="foto", required=false) MultipartFile foto, @RequestParam("nombre_mas") String nombre_mas,@RequestParam("raza_mas") String raza_mas,@RequestParam("edad_mas") int edad_mas,@RequestParam("id_usu") Long id_usu) throws Exception {
+		logger.info("call crear(" + nombre_mas + ", " + raza_mas + ", " + edad_mas + ", " + foto + ", " + id_usu + ")");
+		
+		Mascota mascota = new Mascota();
+		mascota.setNombre_mas(nombre_mas);
+		mascota.setRaza_mas(raza_mas);
+		mascota.setEdad_mas(edad_mas);
+		mascota.setId_usu(id_usu);
+		
+		if (foto != null && !foto.isEmpty()) {
+			String filename = System.currentTimeMillis() + foto.getOriginalFilename().substring(foto.getOriginalFilename().lastIndexOf("."));
+			mascota.setFoto(filename);
+			if(Files.notExists(Paths.get(STORAGEPATH))){
+		        Files.createDirectories(Paths.get(STORAGEPATH));
+		    }
+			Files.copy(foto.getInputStream(), Paths.get(STORAGEPATH).resolve(filename));
+			mascota.setFoto(foto.getOriginalFilename());
+		}
+		
+		productoService.save(mascota);
+		
+		return mascota;
 	}
 }
 
