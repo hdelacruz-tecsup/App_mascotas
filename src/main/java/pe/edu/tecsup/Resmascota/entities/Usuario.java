@@ -1,6 +1,7 @@
 package pe.edu.tecsup.Resmascota.entities;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -27,8 +28,8 @@ public class Usuario {
 	private String password_usu;
 	
 	@OneToMany(cascade=CascadeType.ALL)
-	@JoinColumn(name=("id_usu"),referencedColumnName="id_usu")
-    private List<Mascota> mascota;
+	@JoinColumn(name=("id_usuario"),referencedColumnName="id_usu")
+    private List<Mascota> mascota=new ArrayList<>();
 
 	public Long getId_usu() {
 		return id_usu;
@@ -75,6 +76,8 @@ public class Usuario {
 		return "Usuario [id_usu=" + id_usu + ", nombre_usu=" + nombre_usu + ", correo_usu=" + correo_usu
 				+ ", password_usu=" + password_usu + ", mascota=" + mascota + "]";
 	}
+
+	
 	
 	
 	

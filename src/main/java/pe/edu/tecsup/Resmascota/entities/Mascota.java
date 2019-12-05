@@ -22,7 +22,7 @@ public class Mascota {
 	
 	private String foto;
 	
-	private Long id_usu;
+	private Long id_usuario;
 
 	public Long getId_mas() {
 		return id_mas;
@@ -44,8 +44,8 @@ public class Mascota {
 		return foto;
 	}
 
-	public Long getId_usu() {
-		return id_usu;
+	public Long getId_usuario() {
+		return id_usuario;
 	}
 
 	public void setId_mas(Long id_mas) {
@@ -68,15 +68,15 @@ public class Mascota {
 		this.foto = foto;
 	}
 
-	public void setId_usu(Long id_usu) {
-		this.id_usu = id_usu;
+	public void setId_usuario(Long id_usuario) {
+		this.id_usuario = id_usuario;
 	}
 
 	@Override
 	public String toString() {
 		return "Mascota [id_mas=" + id_mas + ", nombre_mas=" + nombre_mas + ", raza_mas=" + raza_mas + ", edad_mas="
-				+ edad_mas + ", foto=" + foto + ", id_usu=" + id_usu + "]";
+				+ edad_mas + ", foto=" + foto + ", id_usuario=" + id_usuario + "]";
 	}
-	
+
 	
 }

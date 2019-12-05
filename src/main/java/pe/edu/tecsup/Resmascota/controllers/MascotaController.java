@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,19 +36,19 @@ private static final Logger logger = LoggerFactory.getLogger(MascotaController.c
 	private String STORAGEPATH;
 	
 	@Autowired
-	private MascotaService productoService;
+	private MascotaService mascotaService;
 	
-	@GetMapping("/mascota")
+	@GetMapping("/mascotas")
 	public List<Mascota> productos() {
 		logger.info("call productos");
 		
-		List<Mascota> productos = productoService.findAll();
+		List<Mascota> productos = mascotaService.findAll();
 		logger.info("productos: " + productos);
 		
 		return productos;
 	}
 	
-	@GetMapping("/productos/images/{filename:.+}")
+	@GetMapping("/mascotas/images/{filename:.+}")
 	public ResponseEntity<Resource> files(@PathVariable String filename) throws Exception{
 		logger.info("call images: " + filename);
 		
@@ -69,14 +70,14 @@ private static final Logger logger = LoggerFactory.getLogger(MascotaController.c
 	}
 	
 	@PostMapping("/mascotas")
-	public Mascota crear(@RequestParam(name="foto", required=false) MultipartFile foto, @RequestParam("nombre_mas") String nombre_mas,@RequestParam("raza_mas") String raza_mas,@RequestParam("edad_mas") int edad_mas,@RequestParam("id_usu") Long id_usu) throws Exception {
-		logger.info("call crear(" + nombre_mas + ", " + raza_mas + ", " + edad_mas + ", " + foto + ", " + id_usu + ")");
+	public Mascota crear(@RequestParam(name="foto", required=false) MultipartFile foto, @RequestParam("nombre_mas") String nombre_mas,@RequestParam("raza_mas") String raza_mas,@RequestParam("edad_mas") int edad_mas,@RequestParam("id_usu") Long id_usuario) throws Exception {
+		logger.info("call crear(" + nombre_mas + ", " + raza_mas + ", " + edad_mas + ", " + foto + ", " + id_usuario + ")");
 		
 		Mascota mascota = new Mascota();
 		mascota.setNombre_mas(nombre_mas);
 		mascota.setRaza_mas(raza_mas);
 		mascota.setEdad_mas(edad_mas);
-		mascota.setId_usu(id_usu);
+		mascota.setId_usuario(id_usuario);
 		
 		if (foto != null && !foto.isEmpty()) {
 			String filename = System.currentTimeMillis() + foto.getOriginalFilename().substring(foto.getOriginalFilename().lastIndexOf("."));
@@ -88,9 +89,29 @@ private static final Logger logger = LoggerFactory.getLogger(MascotaController.c
 			mascota.setFoto(foto.getOriginalFilename());
 		}
 		
-		productoService.save(mascota);
+		mascotaService.save(mascota);
 		
 		return mascota;
 	}
+	
+	@DeleteMapping("/mascotas/{id_mas}")
+	public ResponseEntity<String> eliminar(@PathVariable Long id_mas) {
+		logger.info("call eliminar: " + id_mas);
+		
+		mascotaService.deleteById(id_mas);
+		
+		return ResponseEntity.ok().body("Registro eliminado");
+	}
+	
+	@GetMapping("/mascotas/{id_mas}")
+	public Mascota obtener(@PathVariable Long id_mas) {
+		logger.info("call obtener: " + id_mas);
+		
+		Mascota producto = mascotaService.findById(id_mas);
+		
+		return producto;
+	}
+
+
 }
 
